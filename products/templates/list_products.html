@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liste des Produits</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'bootstrap.min.css' %}">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .navbar {
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .container {
+            margin-top: 50px;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .card {
+            margin: 15px;
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+        }
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .card img {
+            max-width: 100%;
+            border-radius: 5px 5px 0 0;
+        }
+        .card-title {
+            font-size: 1.25rem;
+            color: #007bff;
+        }
+        .pagination {
+            justify-content: center;  /* Centrer la pagination */
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="/">Mon Application Produit</a>
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav">
+                <li class="nav-item"><a class="nav-link" href="/">Accueil</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'add_product' %}">Ajouter Produit</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'list_products' %}">Liste des Produits</a></li>
+            </ul>
+        </div>
+    </nav>
+    <div class="container">
+        <h1>Liste des Produits</h1>
+        <div class="row">
+            {% for product in products %}
+            <div class="col-md-4">
+                <div class="card">
+                    <img src="{{ product.image.url }}" alt="{{ product.name }}" class="card-img-top"/>
+                    <div class="card-body">
+                        <h5 class="card-title">{{ product.name }}</h5>
+                        <p class="card-text">{{ product.description }}</p>
+                        <p class="card-text">Prix: {{ product.price }} CDF</p>
+                        <a href="{% url 'modify_product' product.id %}" class="btn btn-warning">Modifier</a>
+                        <a href="{% url 'delete_product' product.id %}" class="btn btn-danger">Supprimer</a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center">
+                <p>Aucun produit trouvé.</p>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <!-- Pagination -->
+        <div class="pagination">
+            {% if products.has_previous %}
+                <a class="btn btn-primary" href="?page=1">Première</a>
+                <a class="btn btn-primary" href="?page={{ products.previous_page_number }}">Précédente</a>
+            {% endif %}
+
+            <span>Page {{ products.number }} sur {{ products.paginator.num_pages }}</span>
+
+            {% if products.has_next %}
+                <a class="btn btn-primary" href="?page={{ products.next_page_number }}">Suivante</a>
+                <a class="btn btn-primary" href="?page={{ products.paginator.num_pages }}">Dernière</a>
+            {% endif %}
+        </div>
+    </div>
+    <script src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+</body>
+</html>
